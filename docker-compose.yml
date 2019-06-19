@@ -13,3 +13,20 @@ services:
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411
+    networks:
+      - zipkin-example
+
+  # dotnet core api
+  serivce-a:
+    build:
+      context: ServiceA
+      args: 
+        ZIPKIN_HOST: zipkin
+        ZIPKIN_PORT: 9411
+    ports:
+      - 5050:80
+    networks: 
+      - zipkin-example
+    restart: always
+networks: 
+  zipkin-example:
