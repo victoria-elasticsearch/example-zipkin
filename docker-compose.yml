@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+  # Switch storage type to Elasticsearch
+  zipkin:
+    image: openzipkin/zipkin
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=${ES_HOSTS}
+      - ES_PASSWORD=${ES_PASSWORD}
+      - ES_USERNAME=${ES_USERNAME}
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
