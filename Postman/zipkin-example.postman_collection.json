@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "74bd4d33-4afe-4aaf-a31d-67b9c7cc2d17",
+		"name": "zipkin-example",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GenerateTrace",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ServiceAOptions\": {\n\t\t\"ThrowException\": false\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5050/api/traces",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"api",
+						"traces"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
