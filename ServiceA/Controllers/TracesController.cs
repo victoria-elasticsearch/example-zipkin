@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,40 +31,31 @@ namespace ServiceA.Controllers
 
             var result = new List<TraceRequestModel>() {
                 new TraceRequestModel() {
-                    ThrowExceptionInServiceA = false
+                    ServiceAOptions = new ServiceOptions {
+                        ThrowException = false,
+                        Delay = 10
+                    }
                 }
             };
             return Ok(result);
         }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
+        
         // POST api/values
         [HttpPost]
         public ActionResult<string> Post([FromBody]TraceRequestModel traceRequestModel)
         {
 
-            if(traceRequestModel.ThrowExceptionInServiceA) throw new Exception("This should be a custom exception");
+            if (traceRequestModel.ServiceAOptions == null) 
+                return Ok("Posted");
+
+            if(traceRequestModel.ServiceAOptions.ThrowException) 
+                throw new Exception("This should be a custom exception");
             
+            if(traceRequestModel.ServiceAOptions.Delay > 0)
+                Thread.Sleep(traceRequestModel.ServiceAOptions.Delay);
+
             return Ok("Posted");
      
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
