@@ -19,8 +19,14 @@ namespace ServiceA
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>  {
+                .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
+                {
                     configurationbuilder.AddEnvironmentVariables();
+                })
+                 .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
                 })
                 .UseStartup<Startup>();
     }
