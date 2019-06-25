@@ -25,7 +25,9 @@ func TraceHandler(w http.ResponseWriter, r *http.Request) {
 	
 	log.Printf("trace handler")
 
-
+	for k, v := range r.Header {
+        log.Printf("Header field %q, Value %q\n", k, v)
+    }
 	//params :=mux.Vars(r)
 	var traceRequest TraceRequest
 	_= json.NewDecoder(r.Body).Decode(&traceRequest)

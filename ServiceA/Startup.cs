@@ -29,6 +29,11 @@ namespace ServiceA
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // configure http client with zipkin trace (B3-Propagation)
+            services.AddHttpClient("Tracer").AddHttpMessageHandler(provider =>
+                TracingHandler.WithoutInnerHandler(provider.GetService<IConfiguration>()["applicationName"]));
+
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -49,6 +54,7 @@ namespace ServiceA
 
             var zipkinUrl = $"http://{Configuration.GetSection("ZIPKIN_HOST").Value ?? "localhost"}:{Configuration.GetSection("ZIPKIN_PORT").Value ?? "9411"}";
 
+            // Configure zipkin tracer, traces are sent over http
             var lifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
             lifetime.ApplicationStarted.Register(() => {
                 TraceManager.SamplingRate = 1.0f;
