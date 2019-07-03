@@ -21,10 +21,24 @@ services:
     build:
       context: ServiceA
       args: 
-        ZIPKIN_HOST: zipkin
-        ZIPKIN_PORT: 9411
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
     ports:
       - 5050:80
+    networks: 
+      - zipkin-example
+    restart: always
+
+
+  # golang api
+  serivce-b:
+    build:
+      context: ServiceB
+      args: 
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
+    ports:
+      - 5051:8080
     networks: 
       - zipkin-example
     restart: always

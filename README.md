@@ -45,3 +45,11 @@ in `startup.cs`
     lifetime.ApplicationStopped.Register(() => TraceManager.Stop());
     app.UseTracing("ServiceA");
 ```
+
+## ServiceB GOLANG
+
+Instrumentation: [zipkin-go](https://github.com/openzipkin/zipkin-go)
+
+### Resources
+
+* [instrumenting a go application with zipkin](https://medium.com/devthoughts/instrumenting-a-go-application-with-zipkin-b79cc858ac3e)
