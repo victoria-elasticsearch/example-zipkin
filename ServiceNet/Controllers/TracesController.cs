@@ -41,7 +41,7 @@ namespace ServiceA.Controllers
         public async Task<ActionResult<string>> Post([FromBody]TraceRequestModel traceRequestModel)
         {
             _logger.LogInformation("Trace POST");
-            var options = traceRequestModel.Options.FirstOrDefault(opt => String.Equals("ServiceA", opt.ServiceName, StringComparison.OrdinalIgnoreCase));
+            var options = traceRequestModel.Options.FirstOrDefault(opt => String.Equals("ServiceNet", opt.ServiceName, StringComparison.OrdinalIgnoreCase));
 
             if (options == null)
             {
