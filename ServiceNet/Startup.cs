@@ -42,6 +42,9 @@ namespace ServiceA
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+
+            var loggerStartup = loggerFactory.CreateLogger(nameof(Startup));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -54,6 +57,9 @@ namespace ServiceA
 
             var zipkinUrl = $"http://{Configuration.GetSection("ZIPKIN_HOST").Value ?? "localhost"}:{Configuration.GetSection("ZIPKIN_PORT").Value ?? "9411"}";
 
+            loggerStartup.LogDebug($"zipkin url: {zipkinUrl}");
+        
+
             // Configure zipkin tracer, traces are sent over http
             var lifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
             lifetime.ApplicationStarted.Register(() => {
@@ -65,7 +71,7 @@ namespace ServiceA
                 TraceManager.Start(logger);
             });
             lifetime.ApplicationStopped.Register(() => TraceManager.Stop());
-            app.UseTracing("ServiceA");
+            app.UseTracing("ServiceNet");
             app.UseHttpsRedirection();
             app.UseMvc();
         }

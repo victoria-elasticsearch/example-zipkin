@@ -62,22 +62,29 @@ namespace ServiceA.Controllers
             }
 
 
-            var serviceBUrl = $"{_configuration.GetSection("SERVICEB_URL").Value ?? "http://localhost:8080"}/trace";
+            var serviceBUrl = $"{_configuration.GetSection("SERVICEGO_URL").Value ?? "http://localhost:8080"}/trace";
+            _logger.LogInformation($"ServiceGo url:{serviceBUrl}");
 
-
-
-            using (var httpClient = _httpClientFactory.CreateClient("Tracer"))
+            try
             {
-                var response = await httpClient.PostAsJsonAsync(serviceBUrl, traceRequestModel);
-                if (response.IsSuccessStatusCode)
+
+                using (var httpClient = _httpClientFactory.CreateClient("Tracer"))
                 {
-                    _logger.LogInformation($"ServiceB response: {response.ReasonPhrase}");
-                }
-                else
-                {
-                    _logger.LogCritical($"ServiceB response: {response.ReasonPhrase}");
-                }
-            };
+                    var response = await httpClient.PostAsJsonAsync(serviceBUrl, traceRequestModel);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation($"ServiceB response: {response.ReasonPhrase}");
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"ServiceB response: {response.ReasonPhrase}");
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
 
             return Ok(traceRequestModel);
 

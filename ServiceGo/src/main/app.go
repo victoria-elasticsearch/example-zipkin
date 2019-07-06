@@ -20,7 +20,7 @@ func main() {
     reporter := reporterhttp.NewReporter(getZipkinEndpoint())
 
 	// // create our local service endpoint
-    endpoint, err := zipkin.NewEndpoint("serviceB", "localhost:8080")
+    endpoint, err := zipkin.NewEndpoint("serviceGo", "localhost:8080")
 	if err != nil {
 	    log.Fatalf("unable to create local endpoint: %+v\n", err)
 	}

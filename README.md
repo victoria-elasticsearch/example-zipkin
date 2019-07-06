@@ -50,6 +50,18 @@ in `startup.cs`
 
 Instrumentation: [zipkin-go](https://github.com/openzipkin/zipkin-go)
 
+### Run service locally
+
+```bash
+cd ServiceGo/src/main
+go get
+```
+
+```bash
+go build && ./main.exe
+```
+
+
 ### Resources
 
 * [instrumenting a go application with zipkin](https://medium.com/devthoughts/instrumenting-a-go-application-with-zipkin-b79cc858ac3e)
