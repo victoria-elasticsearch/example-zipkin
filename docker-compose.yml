@@ -44,6 +44,19 @@ services:
       - zipkin-example
     restart: always
 
+############################ Spring api #############################
+  service-spring:
+    build:
+      context: ServiceJava
+      args: 
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
+    ports:
+      - 5052:8080
+    networks: 
+      - zipkin-example
+    restart: always
+
 ############################ RABBITMQ SERVER ##########################
 
   rabbitmq:
