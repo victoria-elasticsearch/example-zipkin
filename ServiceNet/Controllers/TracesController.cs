@@ -41,43 +41,40 @@ namespace ServiceA.Controllers
         public async Task<ActionResult<string>> Post([FromBody]TraceRequestModel traceRequestModel)
         {
             _logger.LogInformation("Trace POST");
-            var options = traceRequestModel.Options.FirstOrDefault(opt => String.Equals("ServiceNet", opt.ServiceName, StringComparison.OrdinalIgnoreCase));
+            var options = traceRequestModel.Options.FirstOrDefault(opt => String.Equals("service-net", opt.ServiceName, StringComparison.OrdinalIgnoreCase));
 
-            if (options == null)
+            if (options != null)
             {
-                _logger.LogInformation("no options");
-                return Ok("Posted");
-            }
+                if (options.ThrowException)
+                {
+                    _logger.LogInformation("service will throw exception");
+                    throw new Exception("This should be a custom exception");
+                }
 
-            if (options.ThrowException)
-            {
-                _logger.LogInformation("service will throw exception");
-                throw new Exception("This should be a custom exception");
-            }
-
-            if (options.Delay > 0)
-            {
-                _logger.LogInformation($"service sleep: {options.Delay}");
-                Thread.Sleep(options.Delay);
+                if (options.Delay > 0)
+                {
+                    _logger.LogInformation($"service sleep: {options.Delay}");
+                    Thread.Sleep(options.Delay);
+                }
             }
 
 
-            var serviceBUrl = $"{_configuration.GetSection("SERVICEGO_URL").Value ?? "http://localhost:8080"}/trace";
-            _logger.LogInformation($"ServiceGo url:{serviceBUrl}");
+            var serviceGoUrl = $"{_configuration.GetSection("SERVICEGO_URL").Value ?? "http://localhost:8080"}/trace";
+            _logger.LogInformation($"ServiceGo url:{serviceGoUrl}");
 
             try
             {
 
                 using (var httpClient = _httpClientFactory.CreateClient("Tracer"))
                 {
-                    var response = await httpClient.PostAsJsonAsync(serviceBUrl, traceRequestModel);
+                    var response = await httpClient.PostAsJsonAsync(serviceGoUrl, traceRequestModel);
                     if (response.IsSuccessStatusCode)
                     {
-                        _logger.LogInformation($"ServiceB response: {response.ReasonPhrase}");
+                        _logger.LogInformation($"service-go  response: {response.ReasonPhrase}");
                     }
                     else
                     {
-                        _logger.LogCritical($"ServiceB response: {response.ReasonPhrase}");
+                        _logger.LogCritical($"service-go  response: {response.ReasonPhrase}");
                     }
                 };
             }

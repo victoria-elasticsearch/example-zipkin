@@ -47,13 +47,13 @@ func otherFunc(client *zipkinhttp.Client) http.HandlerFunc {
 		}
 
 		if serviceOption.ThrowException {
-			log.Printf("Service B throw exception")
+			log.Printf("service-go throw exception")
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
 		if serviceOption.Delay > 0 {
-			log.Printf("Service B delays")
+			log.Printf("service-go delays")
 			time.Sleep(time.Duration(serviceOption.Delay) * time.Millisecond)
 		}
 
@@ -66,7 +66,7 @@ func otherFunc(client *zipkinhttp.Client) http.HandlerFunc {
 func GetServiceOptions(traceRequest TraceRequest) (*ServiceOptions) {
 		for _, opt := range traceRequest.Options {
 			log.Printf(opt.ServiceName)
-			if opt.ServiceName == "ServiceB" {
+			if opt.ServiceName == "service-go" {
 				return &opt
 			}
 		}

@@ -66,16 +66,21 @@ func getZipkinEndpoint() string {
 }
 
 func getZipkinHost() string {
-    if(os.Getenv("GO-ZIPKIN-HOST") == "") {
+    zipkinHost, zipkinHostOk := os.LookupEnv("ZIPKIN_HOST")
+
+    if !zipkinHostOk {
         return "localhost"
     }
-    return os.Getenv("GO-ZIPKIN-HOST")
+    return zipkinHost;
 }
 
 func getZipkinPort() string {
-    if(os.Getenv("GO-ZIPKIN_PORT") == "") {
+
+    zipkinPort, zipkinPortOk := os.LookupEnv("ZIPKIN_PORT")
+
+    if !zipkinPortOk {
         return "9411"
     }
-    return os.Getenv("GO-ZIPKIN_PORT")
+    return zipkinPort;
 }
 
