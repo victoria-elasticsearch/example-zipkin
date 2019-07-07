@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  # Switch storage type to Elasticsearch
+############################ ZIPKIN SERVER #############################
   zipkin:
     image: openzipkin/zipkin
     environment:
@@ -16,7 +16,7 @@ services:
     networks:
       - zipkin-example
 
-  # dotnet core api
+############################ NETCORE API #############################
   serivce-net:
     build:
       context: ServiceNet
@@ -31,7 +31,7 @@ services:
     restart: always
 
 
-  # golang api
+############################ GOLANG API #############################
   service-go:
     build:
       context: ServiceGo
@@ -43,5 +43,21 @@ services:
     networks: 
       - zipkin-example
     restart: always
+
+############################ RABBITMQ SERVER ##########################
+
+  rabbitmq:
+    image: rabbitmq:3.7.15-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ../data/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
+    restart: always
+    networks:
+      - zipkin-example
+
 networks: 
   zipkin-example:
