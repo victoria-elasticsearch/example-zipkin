@@ -32,7 +32,7 @@ services:
 
 
   # golang api
-  serivce-go:
+  service-go:
     build:
       context: ServiceGo
       args: 

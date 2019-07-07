@@ -56,9 +56,7 @@ namespace ServiceA
             }
 
             var zipkinUrl = $"http://{Configuration.GetSection("ZIPKIN_HOST").Value ?? "localhost"}:{Configuration.GetSection("ZIPKIN_PORT").Value ?? "9411"}";
-
-            loggerStartup.LogDebug($"zipkin url: {zipkinUrl}");
-        
+            loggerStartup.LogDebug($"zipKinUrl: {zipkinUrl}");
 
             // Configure zipkin tracer, traces are sent over http
             var lifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
