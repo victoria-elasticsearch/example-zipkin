@@ -6,35 +6,110 @@
 	},
 	"item": [
 		{
-			"name": "GenerateTrace",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"ServiceAOptions\": {\n\t\t\"ThrowException\": false\n\t}\n}"
-				},
-				"url": {
-					"raw": "http://localhost:5050/api/traces",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5050",
-					"path": [
-						"api",
-						"traces"
-					]
+			"name": "ServiceGo",
+			"item": [
+				{
+					"name": "GenerateTrace",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"options\": [\n\t\t{\n\t\t\t\"serviceName\": \"ServiceGo\",\n\t\t\t\"throwException\": false,\n\t\t\t\"delay\": 5\n\t\t}]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5051/trace",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"trace"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "ServiceNet",
+			"item": [
+				{
+					"name": "GenerateTrace",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"options\": [\n\t\t{\n\t\t\t\"serviceName\": \"service-net\",\n\t\t\t\"throwException\": false,\n\t\t\t\"delay\": 0\n\t\t},{\n\t\t\t\"serviceName\": \"service-go\",\n\t\t\t\"throwException\": false,\n\t\t\t\"delay\": 0\n\t\t},{\n\t\t\t\"serviceName\": \"service-spring\",\n\t\t\t\"throwException\": false,\n\t\t\t\"delay\": 0\n\t\t}]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/traces",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"traces"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ServiceSpring",
+			"item": [
+				{
+					"name": "GenerateTrace",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"options\": [\n\t\t{\n\t\t\t\"serviceName\": \"service-spring\",\n\t\t\t\"throwException\": false,\n\t\t\t\"delay\": 0\n\t\t}]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/trace",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"trace"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
