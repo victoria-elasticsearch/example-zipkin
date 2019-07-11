@@ -7,7 +7,7 @@ services:
     image: openzipkin/zipkin
     environment:
       - STORAGE_TYPE=elasticsearch
-      - ES_HOSTS=${ES_HOSTS}
+      - ES_HOSTS=${ES_HOST}
       - ES_PASSWORD=${ES_PASSWORD}
       - ES_USERNAME=${ES_USERNAME}
     ports:
@@ -52,7 +52,7 @@ services:
         ZIPKIN_HOST: ${ZIPKIN_HOST}
         ZIPKIN_PORT: ${ZIPKIN_PORT}
     ports:
-      - 5052:8080
+      - 5052:5002
     networks: 
       - zipkin-example
     restart: always
@@ -69,6 +69,37 @@ services:
     volumes:
         - ../data/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
     restart: always
+    networks:
+      - zipkin-example
+
+############################ FILEBEAT ##########################
+
+  es-filebeat:
+    build:
+      context: ./elastic/filebeat
+      args:
+        ES_VERSION: ${ES_VERSION}
+    environment: 
+      - ES_CLOUD_ID=${ES_CLOUD_ID}
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/var/lib/docker:/var/lib/docker:ro"
+    networks:
+      - zipkin-example
+
+############################ LOGSTASH SERVER ##########################
+
+  es-logstash:
+    build:
+      context: ./elastic/logstash
+      args:
+        ES_VERSION: ${ES_VERSION}
+    environment: 
+      - ES_HOST=${ES_HOST}
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
     networks:
       - zipkin-example
 
