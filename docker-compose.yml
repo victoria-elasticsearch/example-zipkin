@@ -24,6 +24,7 @@ services:
         ZIPKIN_HOST: ${ZIPKIN_HOST}
         ZIPKIN_PORT: ${ZIPKIN_PORT}
         SERVICEGO_URL: http://service-go:8080
+        SERVICESPRING_URL: http://service-spring:5002
     ports:
       - 5050:80
     networks: 
