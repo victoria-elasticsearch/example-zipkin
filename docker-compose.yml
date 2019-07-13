@@ -10,6 +10,7 @@ services:
       - ES_HOSTS=${ES_HOST}
       - ES_PASSWORD=${ES_PASSWORD}
       - ES_USERNAME=${ES_USERNAME}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411
@@ -68,8 +69,38 @@ services:
         - 5672:5672
         - 15672:15672
     volumes:
-        - ../data/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
+        - data:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
     restart: always
+    networks:
+      - zipkin-example
+
+######################## ZOOKEEPER #############################
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    hostname: zookeeper
+    networks:
+      - zipkin-example
+
+#################### KAFKA ###############################
+  
+  kafka:
+    image: wurstmeister/kafka
+    command: [start-kafka.sh]
+    ports:
+      - "9092:9092"
+    hostname: kafka
+    environment:
+      KAFKA_CREATE_TOPICS: "zipkin:1:1" # topic:partition:replicas
+      KAFKA_ADVERTISED_HOST_NAME: kafka # docker-machine ip
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - "zookeeper"
     networks:
       - zipkin-example
 
@@ -106,3 +137,6 @@ services:
 
 networks: 
   zipkin-example:
+
+volumes:
+  data:

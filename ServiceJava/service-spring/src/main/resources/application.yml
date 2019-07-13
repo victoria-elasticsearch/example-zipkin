@@ -4,3 +4,11 @@ server:
 spring:
   application:
     name: service-spring
+  zipkin:
+    sender:
+      type: kafka
+  sleuth:
+    sampler:
+      probability: 1.0
+  kafka:
+    bootstrap-servers: kafka:9092
