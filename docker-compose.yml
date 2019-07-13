@@ -17,6 +17,26 @@ services:
     networks:
       - zipkin-example
 
+############################ ZIPKIN DEPENDENCIES #############################
+
+  dependencies:
+    image: openzipkin/zipkin-dependencies
+    container_name: dependencies
+    entrypoint: crond -f
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=${ES_HOST}
+      - ES_PASSWORD=${ES_PASSWORD}
+      - ES_USERNAME=${ES_USERNAME}
+      # Uncomment to see dependency processing logs
+      # - ZIPKIN_LOG_LEVEL=DEBUG
+      # Uncomment to adjust memory used by the dependencies job
+      # - JAVA_OPTS=-verbose:gc -Xms1G -Xmx1G
+    ports:
+      - 8282:8080
+    networks:
+      - zipkin-example
+
 ############################ NETCORE API #############################
   serivce-net:
     build:

@@ -91,6 +91,9 @@ namespace ServiceA.Controllers
 
                 using (var httpClient = _httpClientFactory.CreateClient("Tracer"))
                 {
+
+                    _logger.LogInformation($"count: {traceRequestModel.Options.Count}");
+
                     var response = await httpClient.PostAsJsonAsync(serviceSpringUrl, traceRequestModel);
                     if (response.IsSuccessStatusCode)
                     {
