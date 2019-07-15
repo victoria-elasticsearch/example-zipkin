@@ -22,8 +22,12 @@ public class TraceController implements TraceApi {
 
     private Logger logger = LoggerFactory.getLogger(TraceController.class);
 
-    @Autowired
+
     private RabbitTemplate rabbitTemplate;
+
+    public TraceController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @Override
     public ResponseEntity<Trace> postTrace(UUID xRequestID, @Valid Trace trace) {
@@ -34,7 +38,7 @@ public class TraceController implements TraceApi {
 
         Optional<TraceOption> traceOption = trace.getOptions()
                 .stream()
-                .filter(opt -> opt.getServiceName() == "service-spring")
+                .filter(opt -> "service-spring".equals(opt.getServiceName()))
                 .findFirst();
 
         if(traceOption.isPresent()) {
@@ -45,7 +49,9 @@ public class TraceController implements TraceApi {
 
             if(option.getDelay() > 0) {
                 try {
+
                     Thread.sleep(option.getDelay().longValue());
+
                 } catch (InterruptedException e) {
                     // do nothing
                 }
