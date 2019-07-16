@@ -79,6 +79,18 @@ services:
       - zipkin-example
     restart: always
 
+############################ Spring consumer #############################
+  service-spring-consumer:
+    build:
+      context: ServiceJava
+      dockerfile: consumer.Dockerfile
+      args: 
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
+    networks: 
+      - zipkin-example
+    restart: always
+
 ############################ RABBITMQ SERVER ##########################
 
   rabbitmq:
