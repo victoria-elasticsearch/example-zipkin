@@ -1,0 +1,23 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      labels.dedot: true
+      templates:
+        - condition:
+            contains:
+              docker.container.image: spring
+          config:
+            - type: docker
+              containers.ids:
+                - "${data.docker.container.id}"
+
+processors:
+- add_cloud_metadata: ~
+
+output.logstash:
+  hosts: ["es-logstash:5044"]

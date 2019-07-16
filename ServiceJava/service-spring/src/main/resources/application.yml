@@ -1,0 +1,19 @@
+server:
+  port:
+    5002
+spring:
+  application:
+    name: service-spring
+  zipkin:
+    sender:
+      type: kafka
+  sleuth:
+    sampler:
+      probability: 1.0
+  kafka:
+    bootstrap-servers: kafka:9092
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest

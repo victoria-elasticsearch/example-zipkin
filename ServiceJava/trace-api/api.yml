@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  version: 0.3.0
+  title: victoria-example
+servers:
+  - url: 'http://localhost/8080'
+tags:
+  - name: trace
+    description: Trace API
+paths:
+  /trace:
+    post:
+      summary: Post a trace to the receiver
+      operationId: PostTrace
+      tags:
+        - trace
+      parameters:
+        - $ref: '#/components/parameters/X-Request-ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trace'
+      responses:
+        '200':
+          description: File successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trace'
+        '503':
+          description: service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    X-Request-ID:
+      in: header
+      name: X-Request-ID
+      schema:
+        type: string
+        format: uuid
+      required: false
+  schemas:
+    TraceOption:
+      properties:
+        serviceName:
+          type: string
+        throwException:
+          type: boolean
+        delay:
+          type: integer
+    Trace:
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraceOption'
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string

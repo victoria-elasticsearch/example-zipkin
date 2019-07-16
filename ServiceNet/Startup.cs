@@ -31,7 +31,9 @@ namespace ServiceA
         {
 
             // configure http client with zipkin trace (B3-Propagation)
-            services.AddHttpClient("Tracer").AddHttpMessageHandler(provider =>
+            services
+                .AddHttpClient("Tracer")
+                .AddHttpMessageHandler(provider =>
                 TracingHandler.WithoutInnerHandler(provider.GetService<IConfiguration>()["applicationName"]));
 
             services

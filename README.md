@@ -10,8 +10,8 @@ docker-compose up
 
 ## Access
 
-* [zipkin ui](localhost:9411)
-* [serviceA (dotnet core api)](localhost:5050)
+- [zipkin ui](localhost:9411)
+- [serviceA (dotnet core api)](localhost:5050)
 
 ## Zipkin
 
@@ -19,7 +19,7 @@ docker-compose up
 
 [Elastic Configuration](https://github.com/apache/incubator-zipkin/commit/0a83d9de47c8235d88c9d5cfb96b3b4342654e3a)
 
-## ServiceA DotNet
+## Service-DotNet
 
 Instrumentation: [zipkin4net](https://github.com/openzipkin/zipkin4net)
 
@@ -46,9 +46,50 @@ in `startup.cs`
     app.UseTracing("ServiceA");
 ```
 
-## ServiceB GOLANG
+## Service-GOLANG
 
 Instrumentation: [zipkin-go](https://github.com/openzipkin/zipkin-go)
+
+## Service-Spring
+
+- [spring-cloud-sleuth](https://cloud.spring.io/spring-cloud-sleuth/spring-cloud-sleuth.html)
+
+Maven Config
+
+```xml
+
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Greenwich.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+    ...
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-sleuth</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>net.logstash.logback</groupId>
+        <artifactId>logstash-logback-encoder</artifactId>
+        <version>6.1</version>
+    </dependency>
+```
+
+logback config: see [logback-spring.xml](ServiceJava/service-spring/src/main/resources/logback-spring.xml)
 
 ### Run service locally
 
@@ -61,7 +102,6 @@ go get
 go build && ./main.exe
 ```
 
-
 ### Resources
 
-* [instrumenting a go application with zipkin](https://medium.com/devthoughts/instrumenting-a-go-application-with-zipkin-b79cc858ac3e)
+- [instrumenting a go application with zipkin](https://medium.com/devthoughts/instrumenting-a-go-application-with-zipkin-b79cc858ac3e)

@@ -1,0 +1,18 @@
+spring:
+  main:
+    web-application-type: none
+  application:
+    name: service-spring-consumer
+  zipkin:
+    sender:
+      type: kafka
+  sleuth:
+    sampler:
+      probability: 1.0
+  kafka:
+    bootstrap-servers: kafka:9092
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest

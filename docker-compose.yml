@@ -2,21 +2,42 @@ version: '3'
 
 services:
 
-  # Switch storage type to Elasticsearch
+############################ ZIPKIN SERVER #############################
   zipkin:
     image: openzipkin/zipkin
     environment:
       - STORAGE_TYPE=elasticsearch
-      - ES_HOSTS=${ES_HOSTS}
+      - ES_HOSTS=${ES_HOST}
       - ES_PASSWORD=${ES_PASSWORD}
       - ES_USERNAME=${ES_USERNAME}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411
     networks:
       - zipkin-example
 
-  # dotnet core api
+############################ ZIPKIN DEPENDENCIES #############################
+
+  dependencies:
+    image: openzipkin/zipkin-dependencies
+    container_name: dependencies
+    entrypoint: crond -f
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=${ES_HOST}
+      - ES_PASSWORD=${ES_PASSWORD}
+      - ES_USERNAME=${ES_USERNAME}
+      # Uncomment to see dependency processing logs
+      # - ZIPKIN_LOG_LEVEL=DEBUG
+      # Uncomment to adjust memory used by the dependencies job
+      # - JAVA_OPTS=-verbose:gc -Xms1G -Xmx1G
+    ports:
+      - 8282:8080
+    networks:
+      - zipkin-example
+
+############################ NETCORE API #############################
   serivce-net:
     build:
       context: ServiceNet
@@ -24,6 +45,7 @@ services:
         ZIPKIN_HOST: ${ZIPKIN_HOST}
         ZIPKIN_PORT: ${ZIPKIN_PORT}
         SERVICEGO_URL: http://service-go:8080
+        SERVICESPRING_URL: http://service-spring:5002
     ports:
       - 5050:80
     networks: 
@@ -31,7 +53,7 @@ services:
     restart: always
 
 
-  # golang api
+############################ GOLANG API #############################
   service-go:
     build:
       context: ServiceGo
@@ -43,5 +65,110 @@ services:
     networks: 
       - zipkin-example
     restart: always
+
+############################ Spring api #############################
+  service-spring:
+    build:
+      context: ServiceJava
+      args: 
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
+    ports:
+      - 5052:5002
+    networks: 
+      - zipkin-example
+    restart: always
+
+############################ Spring consumer #############################
+  service-spring-consumer:
+    build:
+      context: ServiceJava
+      dockerfile: consumer.Dockerfile
+      args: 
+        ZIPKIN_HOST: ${ZIPKIN_HOST}
+        ZIPKIN_PORT: ${ZIPKIN_PORT}
+    networks: 
+      - zipkin-example
+    restart: always
+
+############################ RABBITMQ SERVER ##########################
+
+  rabbitmq:
+    image: rabbitmq:3.7.15-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - data:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
+    restart: always
+    networks:
+      - zipkin-example
+
+######################## ZOOKEEPER #############################
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    hostname: zookeeper
+    networks:
+      - zipkin-example
+
+#################### KAFKA ###############################
+  
+  kafka:
+    image: wurstmeister/kafka
+    command: [start-kafka.sh]
+    ports:
+      - "9092:9092"
+    hostname: kafka
+    environment:
+      KAFKA_CREATE_TOPICS: "zipkin:1:1" # topic:partition:replicas
+      KAFKA_ADVERTISED_HOST_NAME: kafka # docker-machine ip
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - "zookeeper"
+    networks:
+      - zipkin-example
+
+############################ FILEBEAT ##########################
+
+  es-filebeat:
+    build:
+      context: ./elastic/filebeat
+      args:
+        ES_VERSION: ${ES_VERSION}
+    environment: 
+      - ES_CLOUD_ID=${ES_CLOUD_ID}
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/var/lib/docker:/var/lib/docker:ro"
+    networks:
+      - zipkin-example
+
+############################ LOGSTASH SERVER ##########################
+
+  es-logstash:
+    build:
+      context: ./elastic/logstash
+      args:
+        ES_VERSION: ${ES_VERSION}
+    environment: 
+      - ES_HOST=${ES_HOST}
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
+    networks:
+      - zipkin-example
+
 networks: 
   zipkin-example:
+
+volumes:
+  data:

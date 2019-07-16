@@ -1,0 +1,85 @@
+{
+    "index_patterns": [
+        "zipkin-*"
+    ],
+    "settings": {
+        "number_of_shards": 1,
+        "index.default_pipeline": "zipkin"
+    },
+    "mapping": {
+        "_source": {
+            "excludes": [
+                "_q"
+            ]
+        },
+        "dynamic_templates": [
+            {
+                "strings": {
+                    "match": "*",
+                    "match_mapping_type": "string",
+                    "mapping": {
+                        "ignore_above": 256,
+                        "norms": false,
+                        "type": "keyword"
+                    }
+                }
+            }
+        ],
+        "properties": {
+            "_q": {
+                "type": "keyword"
+            },
+            "annotations": {
+                "type": "object",
+                "enabled": false
+            },
+            "duration": {
+                "type": "long"
+            },
+            "id": {
+                "type": "keyword",
+                "ignore_above": 256
+            },
+            "kind": {
+                "type": "keyword",
+                "ignore_above": 256
+            },
+            "localEndpoint": {
+                "dynamic": "false",
+                "properties": {
+                    "serviceName": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "name": {
+                "type": "keyword"
+            },
+            "parentId": {
+                "type": "keyword",
+                "ignore_above": 256
+            },
+            "remoteEndpoint": {
+                "dynamic": "false",
+                "properties": {
+                    "serviceName": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "shared": {
+                "type": "boolean"
+            },
+            "tags": {
+                "type": "object",
+                "enabled": false
+            },
+            "timestamp": {
+                "type": "long"
+            },
+            "end_date": {
+                "type": "date",
+            }
+        }
+    }
+}

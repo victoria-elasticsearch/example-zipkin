@@ -83,6 +83,33 @@ namespace ServiceA.Controllers
                 _logger.LogError(ex.Message);
             }
 
+            var serviceSpringUrl = $"{_configuration.GetSection("SERVICESPRING_URL").Value ?? "http://localhost:8080"}/trace";
+            _logger.LogInformation($"ServiceSpring url:{serviceSpringUrl}");
+            
+            try
+            {
+
+                using (var httpClient = _httpClientFactory.CreateClient("Tracer"))
+                {
+
+                    _logger.LogInformation($"count: {traceRequestModel.Options.Count}");
+
+                    var response = await httpClient.PostAsJsonAsync(serviceSpringUrl, traceRequestModel);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation($"service-spring  response: {response.ReasonPhrase}");
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"service-spring  response: {response.ReasonPhrase}");
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
             return Ok(traceRequestModel);
 
         }
