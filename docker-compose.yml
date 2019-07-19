@@ -28,10 +28,11 @@ services:
       - ES_HOSTS=${ES_HOST}
       - ES_PASSWORD=${ES_PASSWORD}
       - ES_USERNAME=${ES_USERNAME}
+      - ES_NODES_WAN_ONLY=true
       # Uncomment to see dependency processing logs
-      # - ZIPKIN_LOG_LEVEL=DEBUG
+      - ZIPKIN_LOG_LEVEL=DEBUG
       # Uncomment to adjust memory used by the dependencies job
-      # - JAVA_OPTS=-verbose:gc -Xms1G -Xmx1G
+      - JAVA_OPTS=-Xms8G -Xmx8G
     ports:
       - 8282:8080
     networks:

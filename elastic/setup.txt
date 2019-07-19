@@ -1,0 +1,135 @@
+PUT _ingest/pipeline/zipkin-duration
+{
+    "description": "custom_zipkin_processor_duration",
+    "processors": [
+      {
+        "script": {
+          "lang": "painless",
+          "source": "ctx.duration_ms = Math.round(ctx.duration / 1000);"
+        }
+      }
+    ]
+  }
+  
+  
+PUT _ingest/pipeline/zipkin-dependency 
+{
+    "description": "dependencies date",
+    "processors": [
+      {
+        "script": {
+          "lang": "painless",
+          "source": """
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            ctx.timestamp = sdf.parse(ctx._index.substring(18, 28));
+          """
+        }
+      }
+    ]
+  }
+
+PUT _template/zipkin-endtime_template
+{
+    "index_patterns": [
+        "zipkin-span-*"
+    ],
+    "settings": {
+        "number_of_shards": 1,
+        "index.default_pipeline": "zipkin"
+    },
+    "mappings": {
+        "properties": {
+            "end_date": {
+                "type": "date"
+            },
+            "service_traceId": {
+                "type": "keyword"
+            }
+        }
+    }
+}
+
+
+PUT _template/zipkin-dependency
+{
+    "index_patterns": [
+        "zipkin-dependency-*"
+    ],
+    "settings": {
+        "number_of_shards": 1,
+        "index.default_pipeline": "zipkin-dependency"
+    },
+    "mappings": {
+        "properties": {
+            "timestamp": {
+                "type": "date"
+            },
+            "service_traceId": {
+                "type": "keyword"
+            },
+            "parent": {
+                "type": "keyword"
+            },
+          "callCount": {
+                "type": "integer"
+            },
+          "id": {
+                "type": "keyword"
+            },
+          "errorCount": {
+                "type": "integer"
+            },
+          "child": {
+                "type": "keyword"
+            }
+        }
+    }
+}
+
+
+
+
+
+
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "dependencies date",
+    "processors": [
+      {
+        "script": {
+          "lang": "painless",
+          "source": """
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            ctx.timestamp = sdf.parse(ctx.foo.substring(18, 28));
+          """
+        }
+      }
+    ]
+  }
+  ,
+  "docs": [
+    {
+      "_index": "index",
+      "_id": "id",
+      "_source": {
+        "traceId": "adfaf",
+        "localEndpoint.serviceName": "abc",
+        "foo": "zipkin-dependency-2019-07-17",
+        "timestamp": 1,
+        "duration": 3
+      }
+    }
+  ]
+}
+
+
+GET _template/zipkin-autocomplete_template
+GET _template/zipkin-dependency_template
+GET _template/zipkin-span_template
+GET _template/zipkin-endtime_template
+GET _ingest/pipeline/zipkin-dependencies  
+GET _template/zipkin-dependencies
+GET _ingest/pipeline/zipkin
+GET _ingest/pipeline/zipkin-duration
